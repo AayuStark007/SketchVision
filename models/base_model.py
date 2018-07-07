@@ -71,7 +71,7 @@ class Discriminator(nn.Module):
     def __init__(self, input_nc):
         super(Discriminator, self).__init__()
 
-        model [ nn.Conv2d(input_nc, 64, 4, stride=2, padding=1),
+        model = [ nn.Conv2d(input_nc, 64, 4, stride=2, padding=1),
                 nn.LeakyReLU(0.2, inplace=True),
                 
                 nn.Conv2d(64, 128, 4, stride=2, padding=1),
