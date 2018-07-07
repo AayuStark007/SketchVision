@@ -91,6 +91,8 @@ env.bak/
 venv.bak/
 .vscode/
 datasets/
+output/
+testing/
 
 # Spyder project settings
 .spyderproject
