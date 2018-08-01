@@ -16,11 +16,11 @@ def tensor2image(tensor):
     return image.astype(np.uint8)
 
 class Logger():
-    def __init__(self, n_epochs, batches_epoch):
+    def __init__(self, epoch, n_epochs, batches_epoch):
         self.viz = Visdom()
         self.n_epochs = n_epochs
         self.batches_epoch = batches_epoch
-        self.epoch = 1
+        self.epoch = epoch
         self.batch = 1
         self.prev_time = time.time()
         self.mean_period = 0
@@ -48,6 +48,7 @@ class Logger():
 
         batches_done = self.batches_epoch*(self.epoch - 1) + self.batch
         batches_left = self.batches_epoch*(self.n_epochs - self.epoch) + self.batches_epoch - self.batch 
+        #print("time", self.batches_epoch, self.epoch-1, self.batch)
         sys.stdout.write('ETA: %s' % (datetime.timedelta(seconds=batches_left*self.mean_period/batches_done)))
 
         # Draw images

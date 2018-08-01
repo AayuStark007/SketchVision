@@ -17,7 +17,7 @@ from PIL import Image
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--batchSize', type=int, default=1, help='size of the batches')
-parser.add_argument('--dataroot', type=str, default='datasets/horse2zebra/', help='root directory of the dataset')
+#parser.add_argument('--dataroot', type=str, default='datasets/horse2zebra/', help='root directory of the dataset')
 parser.add_argument('--input_nc', type=int, default=3, help='number of channels of input data')
 parser.add_argument('--output_nc', type=int, default=3, help='number of channels of output data')
 parser.add_argument('--size', type=int, default=256, help='size of the data (squared assumed)')
@@ -73,9 +73,7 @@ while cap.isOpened():
 
     data = Image.fromarray(img)
     data_tensor = transform(data)
-    #data = np.reshape(img, (opt.batchSize, opt.input_nc, opt.size, opt.size))
     
-    #data_tensor = torch.from_numpy(data)
     real_A = input_A.copy_(data_tensor)
 
     fake_B = 0.5*(netG_A2B(real_A).detach() + 1.0)
@@ -88,9 +86,6 @@ while cap.isOpened():
         i = 0
     else:
         i += 1
-    #data_out = cv2.cvtColor(np.reshape(fake_B, (256, 256, 3)), cv2.COLOR_RGB2BGR)
-
-    #print(fake_B.shape)
 
     cv2.imshow("Output", data_out)
     
@@ -100,22 +95,3 @@ while cap.isOpened():
     #real_A = input_A.copy_
 cap.release()
 cv2.destroyAllWindows()
-"""
-for i, batch in enumerate(dataloader):
-    # Set model input
-    real_A = Variable(input_A.copy_(batch['A'])).to(device)
-    real_B = Variable(input_B.copy_(batch['B'])).to(device)
-
-    # Generate output
-    fake_B = 0.5*(netG_A2B(real_A).data + 1.0)
-    fake_A = 0.5*(netG_B2A(real_B).data + 1.0)
-
-    # Save image files
-    save_image(fake_A, 'output/A/%04d.png' % (i+1))
-    save_image(fake_B, 'output/B/%04d.png' % (i+1))
-
-    sys.stdout.write('\rGenerated images %04d of %04d' % (i+1, len(dataloader)))
-
-sys.stdout.write('\n')
-###################################
-"""

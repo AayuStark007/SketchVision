@@ -16,7 +16,8 @@ from utils import weights_init_normal
 from datasets import ImageDataset
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--epoch', type=int, default=0, help='starting epoch')
+parser.add_argument('--epoch', type=int, default=1, help='starting epoch')
+parser.add_argument('--model_path', type=str, default='output/', help='model path to continue training')
 parser.add_argument('--n_epochs', type=int, default=200, help='number of epochs of training')
 parser.add_argument('--batchSize', type=int, default=1, help='size of the batches')
 parser.add_argument('--dataroot', type=str, default='datasets/horse2zebra/', help='root directory of the dataset')
@@ -39,11 +40,18 @@ netG_B2A = Generator(opt.output_nc, opt.input_nc).to(device)
 netD_A = Discriminator(opt.input_nc).to(device)
 netD_B = Discriminator(opt.output_nc).to(device)
 
-
-netG_A2B.apply(weights_init_normal)
-netG_B2A.apply(weights_init_normal)
-netD_A.apply(weights_init_normal)
-netD_B.apply(weights_init_normal)
+if opt.epoch > 1:
+    # Load state dicts
+    print("Loading saved model")
+    netG_A2B.load_state_dict(torch.load(opt.model_path+'netG_A2B.pth'))
+    netG_B2A.load_state_dict(torch.load(opt.model_path+'netG_B2A.pth'))
+    netD_A.load_state_dict(torch.load(opt.model_path+'netD_A.pth'))
+    netD_B.load_state_dict(torch.load(opt.model_path+'netD_B.pth'))
+else:
+    netG_A2B.apply(weights_init_normal)
+    netG_B2A.apply(weights_init_normal)
+    netD_A.apply(weights_init_normal)
+    netD_B.apply(weights_init_normal)
 
 # Lossess
 criterion_GAN = torch.nn.MSELoss()
@@ -78,14 +86,18 @@ transforms_ = [ transforms.Resize(int(opt.size*1.12), Image.BICUBIC),
                 transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)) ]
 dataloader = DataLoader(ImageDataset(opt.dataroot, transforms_=transforms_, unaligned=True), 
                         batch_size=opt.batchSize, shuffle=True, num_workers=opt.n_cpu)
-
+limit_iter = 2000
 # Loss plot
-logger = Logger(opt.n_epochs, len(dataloader))
+logger = Logger(opt.epoch, opt.n_epochs, limit_iter)#len(dataloader))
 ###################################
 
 ###### Training ######
 for epoch in range(opt.epoch, opt.n_epochs):
     for i, batch in enumerate(dataloader):
+
+        if i >= limit_iter:
+            break
+
         # Set model input
         real_A = Variable(input_A.copy_(batch['A']))
         real_B = Variable(input_B.copy_(batch['B']))
