@@ -93,6 +93,7 @@ venv.bak/
 datasets/
 output/
 testing/
+models/trained/
 
 # Spyder project settings
 .spyderproject
@@ -106,3 +107,5 @@ testing/
 
 # mypy
 .mypy_cache/
+
+*.pth
