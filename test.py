@@ -19,8 +19,8 @@ parser.add_argument('--output_nc', type=int, default=3, help='number of channels
 parser.add_argument('--size', type=int, default=256, help='size of the data (squared assumed)')
 #parser.add_argument('--cuda', action='store_true', help='use GPU computation')
 parser.add_argument('--n_cpu', type=int, default=8, help='number of cpu threads to use during batch generation')
-parser.add_argument('--generator_A2B', type=str, default='output/netG_A2B.pth', help='A2B generator checkpoint file')
-parser.add_argument('--generator_B2A', type=str, default='output/netG_B2A.pth', help='B2A generator checkpoint file')
+parser.add_argument('--generator_A2B', type=str, default='models/trained/base_model_150_m2p/netG_A2B.pth', help='A2B generator checkpoint file')
+parser.add_argument('--generator_B2A', type=str, default='models/trained/base_model_150_m2p/netG_B2A.pth', help='B2A generator checkpoint file')
 opt = parser.parse_args()
 print(opt)
 
@@ -47,12 +47,12 @@ input_B = Tensor(opt.batchSize, opt.output_nc, opt.size, opt.size).to(device)
 # Dataset loader
 transforms_ = [ transforms.ToTensor()]
                 #transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)) ]
-dataloader = DataLoader(ImageDataset(opt.dataroot, transforms_=transforms_, mode='test'), 
-                        batch_size=opt.batchSize, shuffle=False, num_workers=opt.n_cpu)
+dataloader = DataLoader(ImageDataset(opt.dataroot, transforms_=transforms_, mode='test', name="haha"), 
+                        batch_size=opt.batchSize, shuffle=False)#, num_workers=opt.n_cpu)
 ###################################
 
 ###### Testing######
-
+print(len(dataloader))
 # Create output dirs if they don't exist
 if not os.path.exists('output/A'):
     os.makedirs('output/A')
@@ -73,6 +73,8 @@ for i, batch in enumerate(dataloader):
     save_image(fake_B, 'output/B/%04d.png' % (i+1))
 
     sys.stdout.write('\rGenerated images %04d of %04d' % (i+1, len(dataloader)))
+    if i > 100:
+        break
 
 sys.stdout.write('\n')
 ###################################

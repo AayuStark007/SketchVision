@@ -23,14 +23,14 @@ parser.add_argument('--output_nc', type=int, default=3, help='number of channels
 parser.add_argument('--size', type=int, default=256, help='size of the data (squared assumed)')
 #parser.add_argument('--cuda', action='store_true', help='use GPU computation')
 parser.add_argument('--n_cpu', type=int, default=8, help='number of cpu threads to use during batch generation')
-parser.add_argument('--generator_A2B', type=str, default='output/base_model_25_h2z/netG_A2B.pth', help='A2B generator checkpoint file')
-parser.add_argument('--generator_B2A', type=str, default='output/base_model_25_h2z/netG_B2A.pth', help='B2A generator checkpoint file')
+parser.add_argument('--generator_A2B', type=str, default='models/trained/base_model_150_m2p/netG_B2A.pth', help='A2B generator checkpoint file')
+parser.add_argument('--generator_B2A', type=str, default='models/trained/base_model_150_m2p/netG_B2A.pth', help='B2A generator checkpoint file')
 opt = parser.parse_args()
 print(opt)
 
 device = torch.device("cuda")
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 ###### Definition of variables ######
 # Networks
@@ -58,7 +58,8 @@ i = 0
 ###### Testing######
 
 while cap.isOpened():
-    img = cv2.cvtColor(cap.read()[1], cv2.COLOR_BGR2RGB)
+    o_img = cap.read()[1]
+    img = cv2.cvtColor(o_img, cv2.COLOR_BGR2RGB)
     
     if img is None:
         break
@@ -88,6 +89,7 @@ while cap.isOpened():
         i += 1
 
     cv2.imshow("Output", data_out)
+    cv2.imshow("Original", o_img)
     
     if cv2.waitKey(24) & 0xFF == ord('q'):
         break
